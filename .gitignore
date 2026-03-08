@@ -1,1 +1,17 @@
-.env
+# Python virtual environment (The heavy 16,000 files)
+.venv/
+venv/
+env/
+__pycache__/
+*.pyc
+
+# Your Chroma Database (The "Memory" that stays local)
+university_db/
+chroma_data/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Large PDF folder (Optional: If you want to keep your PDFs local only)
+# PDF faqs/

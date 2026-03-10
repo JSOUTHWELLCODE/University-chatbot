@@ -15,3 +15,12 @@ Thumbs.db
 
 # Large PDF folder (Optional: If you want to keep your PDFs local only)
 # PDF faqs/
+
+
+
+# Ignore the Chroma database folder
+University_Knowledge_Base/
+
+# Ignore SQLite temporary files (important for Chroma)
+*.sqlite3-shm
+*.sqlite3-wal

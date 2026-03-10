@@ -4,14 +4,13 @@ import gradio as gr
 from concurrent.futures import ThreadPoolExecutor
 
 from langchain_community.document_loaders import PyMuPDFLoader, DirectoryLoader
-from langchain_community.embeddings import OllamaEmbeddings
+
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from chromadb.config import Settings
 from chromadb import Client, chromadb
-from langchain_community.vectorstores import Chroma
-from langchain_community.llms import Ollama
+from langchain_chroma import Chroma
+from langchain_ollama import OllamaLLM , OllamaEmbeddings
 import os
-
 from VectorStore import returnDB
 
 
@@ -36,73 +35,9 @@ embedding_function = OllamaEmbeddings(model="deepseek-r1:1.5b")
 llm = Ollama(model="deepseek-r1:1.5b")
 
 
-'''
-# Parallelize embedding generation
-def generate_embedding(chunk):
-    return embedding_function.embed_query(chunk.page_content)
-with ThreadPoolExecutor() as executor:
-    embeddings = list(executor.map(generate_embedding, chunks))
 
 
-
-
-
-
-'''
-
-
-
-
-
-# Initialize Chroma client and create/reset the collection
-#client = Client(Settings())
-
-
-
-client = chromadb.PersistentClient(path="./chroma_db")
-
-
-
-
-'''
-
-
-try:
-    client.delete_collection(name="faq_pdf")
-    print("Deleted existing collection.")
-except Exception:
-    print("No existing collection found to delete. Starting fresh!")
-    
-'''
-
-
-
-'''
-
-
-#client.delete_collection(name="faq pdf")  # Delete existing collection (if any)
-collection = client.create_collection(name="faq_pdf")
-# Add documents and embeddings to Chroma
-for idx, chunk in enumerate(chunks):
-    collection.add(
-        documents=[chunk.page_content], 
-        metadatas=[{'id': idx}], 
-        embeddings=[embeddings[idx]], 
-        ids=[str(idx)]  # Ensure IDs are strings
-    )
-
-
-
-
-
-'''
-
-
-
-
-
-
-# 1. Get the Database Object from your function
+# 1. Get the Database Object 
 vector_db = returnDB(embedding_function, persist_path)
 
 

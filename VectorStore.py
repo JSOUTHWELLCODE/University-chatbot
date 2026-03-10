@@ -1,5 +1,5 @@
 from langchain_community.document_loaders import PyMuPDFLoader, DirectoryLoader
-from langchain_community.embeddings import OllamaEmbeddings
+
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from chromadb.config import Settings
 from chromadb import Client, chromadb
@@ -104,8 +104,8 @@ if __name__ == "__main__":
     # This is the "Librarian" interface for your database
     retriever = vector_db.as_retriever(search_kwargs={"k": 3})
 
-
-    add_new_pdf_to_db("/Users/Jonny/Desktop/University-chatbot/PDF faqs/IT_SUPPORT.pdf", vector_db)
+    #Add new chunks to the Data base 
+    #add_new_pdf_to_db("/Users/Jonny/Desktop/University-chatbot/PDF faqs/IT_SUPPORT.pdf", vector_db)
 
     
 

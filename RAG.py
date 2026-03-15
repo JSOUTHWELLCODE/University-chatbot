@@ -13,9 +13,11 @@ from langchain_ollama import OllamaLLM , OllamaEmbeddings
 import os
 from VectorStore import returnDB
 
+from Fuzzymatching import Fuzzymatch
 
 
 
+matcher = Fuzzymatch("/Users/Jonny/Desktop/University-chatbot/Contact emails/CONTACT EMAILS.xlsx")
 
 # Load the document using PyMuPDFLoader
 #loader = PyMuPDFLoader("/Users/Jonny/Desktop/University-chatbot/PDF faqs/FAQS clearing.pdf")
@@ -32,7 +34,7 @@ persist_path = "/Users/Jonny/Desktop/University-chatbot/PDF faqs/University_Know
 embedding_function = OllamaEmbeddings(model="deepseek-r1:1.5b")
 
 
-llm = Ollama(model="deepseek-r1:1.5b")
+llm = OllamaLLM(model="deepseek-r1:1.5b")
 
 
 
@@ -76,9 +78,27 @@ def retrieve_context(question):
 
 def ask_question(question):
     # Retrieve context and generate an answer using RAG
+    
+    fuzzy_result = matcher.find_department(question)
+    
+    # If a match was found, we add it to our knowledge
+    if fuzzy_result:
+        contact_info = f"\nNote: The official contact for this department is {fuzzy_result}."
+    else:
+        contact_info = ""
+
+    # --- 3. Step Two: Get general context from Vector DB ---
     context = retrieve_context(question)
-    answer = query_deepseek(question, context)
+    
+    # Combine the Excel data + the Vector DB data
+    combined_context = context + contact_info
+    
+    # --- 4. Step Three: Send everything to DeepSeek ---
+    answer = query_deepseek(question, combined_context)
     return answer
+
+
+
 
 
 

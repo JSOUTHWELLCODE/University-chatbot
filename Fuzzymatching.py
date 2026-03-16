@@ -33,7 +33,7 @@ class Fuzzymatch:
             
             if score >= threshold:
                 # Use self.df to access the dataframe
-                email = self.df.loc[self.df['Department'] == match_name, 'Emails'].iloc[0]
+                email = self.df.loc[self.df['Department'] == match_name, 'Emails'].item()
                 
 
                 return f"{match_name} (Email: {email})" # Return string so model can add to knowledge base 

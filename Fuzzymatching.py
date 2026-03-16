@@ -13,8 +13,7 @@ df = pd.read_excel("/Users/Jonny/Desktop/University-chatbot/Contact emails/Conta
 
 
 
-import pandas as pd
-from thefuzz import fuzz, process
+
 
 class Fuzzymatch:
     def __init__(self, path):

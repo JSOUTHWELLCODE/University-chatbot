@@ -1,3 +1,28 @@
+
+'''
+
+
+
+import ollama
+import re
+import gradio as gr
+from concurrent.futures import ThreadPoolExecutor
+
+from langchain_community.document_loaders import PyMuPDFLoader, DirectoryLoader
+
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from chromadb.config import Settings
+from chromadb import Client, chromadb
+from langchain_chroma import Chroma
+from langchain_ollama import OllamaLLM , OllamaEmbeddings
+import os
+from VectorStore import returnDB
+
+from Fuzzymatching import Fuzzymatch
+
+
+'''
+
 import ollama
 import re
 import gradio as gr
@@ -17,13 +42,21 @@ from Fuzzymatching import Fuzzymatch
 
 
 
+
+
+
+
+
+
+
+#_______Contacts email path 
 matcher = Fuzzymatch("/Users/Jonny/Desktop/University-chatbot/Contact emails/CONTACT EMAILS.xlsx")
 
 # Load the document using PyMuPDFLoader
 #loader = PyMuPDFLoader("/Users/Jonny/Desktop/University-chatbot/PDF faqs/FAQS clearing.pdf")
 
 
-path = "/Users/Jonny/Desktop/University-chatbot/PDF faqs/FAQS clearing.pdf"
+#path = "/Users/Jonny/Desktop/University-chatbot/PDF faqs/FAQS clearing.pdf"
 
 
 persist_path = "/Users/Jonny/Desktop/University-chatbot/PDF faqs/University_Knowledge_Base"

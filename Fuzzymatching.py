@@ -33,11 +33,12 @@ class Fuzzymatch:
             
             if score >= threshold:
                 # Use self.df to access the dataframe
-                email = self.df.loc[self.df['Department'] == match_name, 'Emails'].item()
-            
-                print(f"Found match: {match_name} (Score: {score})")
-                print(f"Email: {email}")
-                return email # Returning the email makes it useful for your RAG engine
+                email = self.df.loc[self.df['Department'] == match_name, 'Emails'].iloc[0]
+                
+
+                return f"{match_name} (Email: {email})" # Return string so model can add to knowledge base 
+
+                
             else:
                 print("I'm not sure which department you mean. Could you be more specific?")
                 return None

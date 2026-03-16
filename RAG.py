@@ -15,7 +15,7 @@ from VectorStore import returnDB
 
 from Fuzzymatching import Fuzzymatch
 
-
+'''
 
 matcher = Fuzzymatch("/Users/Jonny/Desktop/University-chatbot/Contact emails/CONTACT EMAILS.xlsx")
 
@@ -97,7 +97,11 @@ def ask_question(question):
     answer = query_deepseek(question, combined_context)
     return answer
 
+'''
 
+
+def mock_ask(question):
+    return f"UI TEST: You asked '{question}'. The ai reply here."
 
 
 
@@ -105,7 +109,7 @@ def ask_question(question):
 
 # Set up the Gradio interface
 interface = gr.Interface(
-    fn=ask_question,
+    fn=mock_ask,
     inputs="text",
     outputs="text",
     title="University Chatbot",

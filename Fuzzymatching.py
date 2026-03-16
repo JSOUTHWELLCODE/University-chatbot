@@ -25,14 +25,16 @@ class Fuzzymatch:
         self.departments = self.df['Department'].dropna().unique().tolist()
 
     def find_department(self, userinput, threshold=70):
-        # Use self.departments to access the list created in __init__
+        # Use self.departments to access runs fuzzy match over the frame stored in a touple
         result = process.extractOne(userinput, self.departments, scorer=fuzz.token_set_ratio)
 
+        #unpack tuple 
         if result:
             match_name, score = result
             
+
             if score >= threshold:
-                # Use self.df to access the dataframe
+                # Use self.df to access the pandas dataframe
                 email = self.df.loc[self.df['Department'] == match_name, 'Emails'].item()
                 
 

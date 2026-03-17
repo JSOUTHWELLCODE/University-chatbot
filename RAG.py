@@ -1,13 +1,6 @@
 
-'''
-
-
-
-import ollama
 import re
 import gradio as gr
-from concurrent.futures import ThreadPoolExecutor
-
 from langchain_community.document_loaders import PyMuPDFLoader, DirectoryLoader
 
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -19,54 +12,22 @@ import os
 from VectorStore import returnDB
 
 from Fuzzymatching import Fuzzymatch
-
-
-'''
-
-import ollama
-import re
-import gradio as gr
-from concurrent.futures import ThreadPoolExecutor
-
-from langchain_community.document_loaders import PyMuPDFLoader, DirectoryLoader
-
-from langchain_text_splitters import RecursiveCharacterTextSplitter
-from chromadb.config import Settings
-from chromadb import Client, chromadb
-from langchain_chroma import Chroma
-from langchain_ollama import OllamaLLM , OllamaEmbeddings
-import os
-from VectorStore import returnDB
-
-from Fuzzymatching import Fuzzymatch
-
-
-
-
-
-
-
 
 
 
 #_______Contacts email path 
 matcher = Fuzzymatch("/Users/Jonny/Desktop/University-chatbot/Contact emails/CONTACT EMAILS.xlsx")
 
-# Load the document using PyMuPDFLoader
-#loader = PyMuPDFLoader("/Users/Jonny/Desktop/University-chatbot/PDF faqs/FAQS clearing.pdf")
-
-
-#path = "/Users/Jonny/Desktop/University-chatbot/PDF faqs/FAQS clearing.pdf"
-
-
+#_____Change to the location of the knowledge base FAQ PDFS
 persist_path = "/Users/Jonny/Desktop/University-chatbot/PDF faqs/University_Knowledge_Base"
 
 
 
-# Initialize Ollama embeddings using DeepSeek-R1
+# Initialize Ollama embeddings using DeepSeek-R1 // put the model name here
 embedding_function = OllamaEmbeddings(model="deepseek-r1:1.5b")
 
 
+ #put the model name here
 llm = OllamaLLM(model="deepseek-r1:1.5b")
 
 
@@ -93,11 +54,10 @@ def query_deepseek(question, context):
     )
     
     # 2. Use LangChain's .invoke() on the llm object
-    # Notice we just pass the prompt string directly!
     response = llm.invoke(prompt)
     
-    # 3. Clean and return the response
-    # LangChain returns a string directly, so we don't need response['message']
+    
+    # LangChain returns a string directly
     final_answer = re.sub(r'<think>.*?</think>', '', response, flags=re.DOTALL).strip()
     return final_answer
 
@@ -129,9 +89,6 @@ def ask_question(question):
     # --- 4. Step Three: Send everything to DeepSeek ---
     answer = query_deepseek(question, combined_context)
     return answer
-
-
-
 
 
 

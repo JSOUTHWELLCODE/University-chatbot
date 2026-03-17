@@ -1,21 +1,4 @@
 
-
-"""
-
-
-from langchain_community.document_loaders import PyMuPDFLoader, DirectoryLoader
-from langchain_text_splitters import RecursiveCharacterTextSplitter
-from chromadb.config import Settings
-from chromadb import Client, chromadb
-from langchain_chroma import Chroma
-
-from langchain_ollama import OllamaLLM , OllamaEmbeddings
-import os
-from concurrent.futures import ThreadPoolExecutor
-
-
-"""
-
 import os
 from langchain_community.document_loaders import PyMuPDFLoader, DirectoryLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -23,17 +6,9 @@ from langchain_chroma import Chroma
 from langchain_ollama import OllamaLLM, OllamaEmbeddings
 
 
-
-
-
-
-
-
-
-
 path = "/Users/Jonny/Desktop/University-chatbot/PDF faqs"
 
-
+#path to FAQ folders 
 loader = DirectoryLoader("/Users/Jonny/Desktop/University-chatbot/PDF faqs", glob="**/*.pdf",  loader_cls=PyMuPDFLoader)
 
 

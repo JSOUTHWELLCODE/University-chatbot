@@ -1,4 +1,4 @@
-import ollama
+
 import re
 import gradio as gr
 from concurrent.futures import ThreadPoolExecutor

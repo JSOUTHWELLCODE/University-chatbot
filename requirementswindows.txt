@@ -1,0 +1,7 @@
+gradio==6.9.0
+langchain_chroma==1.1.0
+langchain_community==0.4.1
+langchain_ollama==1.0.1
+langchain_text_splitters==1.1.1
+pandas==3.0.1
+thefuzz==0.22.1

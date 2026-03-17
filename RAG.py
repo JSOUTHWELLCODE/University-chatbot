@@ -4,8 +4,8 @@ import gradio as gr
 from langchain_community.document_loaders import PyMuPDFLoader, DirectoryLoader
 
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from chromadb.config import Settings
-from chromadb import Client, chromadb
+#from chromadb.config import Settings
+#from chromadb import Client, chromadb
 from langchain_chroma import Chroma
 from langchain_ollama import OllamaLLM , OllamaEmbeddings
 import os
@@ -16,19 +16,25 @@ from Fuzzymatching import Fuzzymatch
 
 
 #_______Contacts email path 
-matcher = Fuzzymatch("/Users/Jonny/Desktop/University-chatbot/Contact emails/CONTACT EMAILS.xlsx")
+matcher = Fuzzymatch(r"Z:\Group project\Contact emails\CONTACT EMAILS.xlsx")
 
 #_____Change to the location of the knowledge base FAQ PDFS
-persist_path = "/Users/Jonny/Desktop/University-chatbot/PDF faqs/University_Knowledge_Base"
+persist_path = r"Z:\Group project\PDF faqs"
 
 
 
 # Initialize Ollama embeddings using DeepSeek-R1 // put the model name here
-embedding_function = OllamaEmbeddings(model="deepseek-r1:1.5b")
+embedding_function = OllamaEmbeddings(model="nomic-embed-text")
+
+
+
 
 
  #put the model name here
-llm = OllamaLLM(model="deepseek-r1:1.5b")
+llm = OllamaLLM(model="deepseek-r1:8b")
+
+#for mac
+#llm = OllamaLLM(model="deepseek-r1:1.5b")
 
 
 

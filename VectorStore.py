@@ -8,8 +8,20 @@ from langchain_ollama import OllamaLLM, OllamaEmbeddings
 
 path = r"Z:\Group project\PDF faqs"
 
+
+#_________MAC PAth
+#persist_path = r"/Users/Jonny/Desktop/University-chatbot/PDF faqs/University_Knowledge_Base"
+
+
+
 #path to FAQ folders 
 loader = DirectoryLoader(r"Z:\Group project\PDF faqs", glob="**/*.pdf",  loader_cls=PyMuPDFLoader)
+
+
+#_____MAC
+loader = DirectoryLoader(r"/Users/Jonny/Desktop/University-chatbot/PDF faqs"
+, glob="**/*.pdf",  loader_cls=PyMuPDFLoader)
+
 
 
 
@@ -87,11 +99,9 @@ def add_new_pdf_to_db(pdf_path, vectorstore):
 
 if __name__ == "__main__":
     # 1. Initialize/Load the Database
-    # We save it to a variable called 'vector_db' (our local hammer)
     vector_db = returnDB(embedding_function, persist_path)
 
     # 2. Create the Retriever 
-    # This is the "Librarian" interface for your database
     retriever = vector_db.as_retriever(search_kwargs={"k": 3})
 
     #Add new chunks to the Data base 

@@ -18,8 +18,19 @@ from Fuzzymatching import Fuzzymatch
 #_______Contacts email path 
 matcher = Fuzzymatch(r"Z:\Group project\Contact emails\CONTACT EMAILS.xlsx")
 
+#mac
+matcher = Fuzzymatch(r"/Users/Jonny/Desktop/University-chatbot/Contact emails/CONTACT EMAILS.xlsx")
+
+
+
+
+
 #_____Change to the location of the knowledge base FAQ PDFS
 persist_path = r"Z:\Group project\PDF faqs"
+
+#mac
+#persist_path = r"/Users/Jonny/Desktop/University-chatbot/PDF faqs/University_Knowledge_Base"
+
 
 
 

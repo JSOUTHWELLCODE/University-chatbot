@@ -4,6 +4,7 @@ from langchain_community.document_loaders import PyMuPDFLoader, DirectoryLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_chroma import Chroma
 from langchain_ollama import OllamaLLM, OllamaEmbeddings
+import shutil
 
 
 #path = r"Z:\Group project\PDF faqs"
@@ -93,6 +94,19 @@ def add_new_pdf_to_db(pdf_path, vectorstore):
     
     print(f"✅ Successfully added {len(new_chunks)} chunks from {pdf_path}")
        
+
+
+
+
+def delete_database(persist_path):
+    # It's often safer to check for the whole directory
+    if os.path.exists(persist_path):
+        shutil.rmtree(persist_path)
+        return f"Database at '{persist_path}' deleted successfully."
+    else:
+        return f"folder '{persist_path}' not found. Nothing to delete."
+
+
 
 
 

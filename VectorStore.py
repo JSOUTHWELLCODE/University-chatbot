@@ -6,16 +6,16 @@ from langchain_chroma import Chroma
 from langchain_ollama import OllamaLLM, OllamaEmbeddings
 
 
-path = r"Z:\Group project\PDF faqs"
+#path = r"Z:\Group project\PDF faqs"
 
 
 #_________MAC PAth
-#persist_path = r"/Users/Jonny/Desktop/University-chatbot/PDF faqs/University_Knowledge_Base"
+persist_path = r"/Users/Jonny/Desktop/University-chatbot/PDF faqs/University_Knowledge_Base"
 
 
 
 #path to FAQ folders 
-loader = DirectoryLoader(r"Z:\Group project\PDF faqs", glob="**/*.pdf",  loader_cls=PyMuPDFLoader)
+#loader = DirectoryLoader(r"Z:\Group project\PDF faqs", glob="**/*.pdf",  loader_cls=PyMuPDFLoader)
 
 
 #_____MAC
@@ -28,6 +28,7 @@ loader = DirectoryLoader(r"/Users/Jonny/Desktop/University-chatbot/PDF faqs"
 
 # Initialize Ollama embeddings using DeepSeek-R1
 embedding_function = OllamaEmbeddings(model="nomic-embed-text")
+
 
 
 

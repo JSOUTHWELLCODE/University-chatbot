@@ -16,7 +16,7 @@ Thumbs.db
 # Large PDF folder (Optional: If you want to keep your PDFs local only)
 # PDF faqs/
 
-
+.env
 
 # Ignore the Chroma database folder
 University_Knowledge_Base/

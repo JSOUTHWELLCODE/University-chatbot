@@ -16,8 +16,6 @@ from Fuzzymatching import Fuzzymatch
 
 
 
-
-
 class chatbot:
     def __init__(self, persist_path, excel_path, llm_model, embed_model="nomic-embed-text"):
         self.persist_path = persist_path
@@ -30,13 +28,36 @@ class chatbot:
 
     def query_deepseek(self, question, context):
         # 1. Format the input prompt into a single string
-        prompt = (
-            "You are a University Assistant at the university of Huddersfield. Use the provided Context to answer the Question. "
-            "If the Question is just a greeting (like 'Hello' or 'Hi'), just say 'Hello! How can I help you with the information about the university?' "
-            "Otherwise, use the context provided below.\n\n"
-            f"Context: {context}\n\n"
-            f"Question: {question}"
+        
+      #  if not context or "No relevent content" in context:
+         #   return "I am sorry I dont have info on that please contact the student hub"
+        
+        
+        
+        
+        
+        system_instruction = (
+        "### ROLE ###\n"
+        "You are the University of Huddersfield Official Assistant.\n\n"
+        "### RULES ###\n"
+        "1. ONLY use the provided 'Context' below. Do NOT use your own knowledge.\n"
+        "2. If the answer is not in the Context, say: 'I am sorry, I don't have that information. Please contact the student hub at study@hud.ac.uk.'\n"
+        "3. Do NOT mention other universities or generic external links.\n"
+        "4. If the user's input is a greeting (e.g., 'Hello', 'Hi', 'Hey', 'Good morning'), ignore the Context for a moment and respond ONLY with: 'I am the university chatbot, how can I help you today?'"
+        
+        
+        
         )
+
+
+
+        prompt = (
+        f"{system_instruction}\n"
+        f"### CONTEXT ###\n{context}\n\n"
+        f"### QUESTION ###\n{question}\n"
+        "### FINAL ANSWER ###"
+        )
+
         
         # 2. Use LangChain's .invoke() on the llm object
         response = self.llm.invoke(prompt)

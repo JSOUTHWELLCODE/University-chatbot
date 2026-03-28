@@ -1,7 +1,9 @@
-import ollama
+#import ollama
 import re
 import gradio as gr
-from concurrent.futures import ThreadPoolExecutor
+#from concurrent.futures import ThreadPoolExecutor
+
+'''
 
 from langchain_community.document_loaders import PyMuPDFLoader, DirectoryLoader
 
@@ -14,6 +16,11 @@ import os
 from VectorStore import returnDB
 
 from Fuzzymatching import Fuzzymatch
+
+
+
+'''
+
 
 '''
 

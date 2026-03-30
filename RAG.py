@@ -4,30 +4,60 @@ import gradio as gr
 #from concurrent.futures import ThreadPoolExecutor
 
 '''
+
 from langchain_community.document_loaders import PyMuPDFLoader, DirectoryLoader
+
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from chromadb.config import Settings
 from chromadb import Client, chromadb
 from langchain_chroma import Chroma
-from langchain_ollama import OllamaLLM, OllamaEmbeddings
+from langchain_ollama import OllamaLLM , OllamaEmbeddings
 import os
 from VectorStore import returnDB
+
 from Fuzzymatching import Fuzzymatch
-'''
+
+
 
 '''
+
+
+'''
+
 matcher = Fuzzymatch("/Users/Jonny/Desktop/University-chatbot/Contact emails/CONTACT EMAILS.xlsx")
 
-path = "/Users/Jonny/Desktop/University-chatbot/PDF faqs/FAQS clearing.pdf")
+# Load the document using PyMuPDFLoader
+#loader = PyMuPDFLoader("/Users/Jonny/Desktop/University-chatbot/PDF faqs/FAQS clearing.pdf")
+
+
+path = "/Users/Jonny/Desktop/University-chatbot/PDF faqs/FAQS clearing.pdf"
+
+
 persist_path = "/Users/Jonny/Desktop/University-chatbot/PDF faqs/University_Knowledge_Base"
 
+
+
+# Initialize Ollama embeddings using DeepSeek-R1
 embedding_function = OllamaEmbeddings(model="deepseek-r1:1.5b")
+
+
 llm = OllamaLLM(model="deepseek-r1:1.5b")
 
+
+
+
+# 1. Get the Database Object 
 vector_db = returnDB(embedding_function, persist_path)
+
+
+
+
 retriever = vector_db.as_retriever()
 
+
+
 def query_deepseek(question, context):
+    # 1. Format the input prompt into a single string
     prompt = (
         "You are a University Assistant at the university of Huddersfield. Use the provided Context to answer the Question. "
         "If the Question is just a greeting (like 'Hello' or 'Hi'), just say 'Hello! How can I help you with the information about the university?' "
@@ -35,141 +65,68 @@ def query_deepseek(question, context):
         f"Context: {context}\n\n"
         f"Question: {question}"
     )
-
+    
+    # 2. Use LangChain's .invoke() on the llm object
+    # Notice we just pass the prompt string directly!
     response = llm.invoke(prompt)
+    
+    # 3. Clean and return the response
+    # LangChain returns a string directly, so we don't need response['message']
     final_answer = re.sub(r'<think>.*?</think>', '', response, flags=re.DOTALL).strip()
     return final_answer
 
 def retrieve_context(question):
+    # Retrieve relevant documents
     results = retriever.invoke(question)
+    # Combine the retrieved content
     context = "\n\n".join([doc.page_content for doc in results])
     return context
 
-def ask_question(question):
-    fuzzy_result = matcher.find_department(question)
 
+def ask_question(question):
+    # Retrieve context and generate an answer using RAG
+    
+    fuzzy_result = matcher.find_department(question)
+    
+    # If a match was found, we add it to our knowledge
     if fuzzy_result:
         contact_info = f"\nNote: The official contact for this department is {fuzzy_result}."
     else:
         contact_info = ""
 
+    # --- 3. Step Two: Get general context from Vector DB ---
     context = retrieve_context(question)
+    
+    # Combine the Excel data + the Vector DB data
     combined_context = context + contact_info
+    
+    # --- 4. Step Three: Send everything to DeepSeek ---
     answer = query_deepseek(question, combined_context)
     return answer
+
 '''
 
 
-# =========================================================
-# KEEP THIS EXACT STYLE FROM YOUR ORIGINAL STARTER
-# =========================================================
 def mock_ask(question):
-    question = (question or "").strip()
+    return f"UI TEST: You asked '{question}'. The ai reply here."
 
-    if not question:
-        return "Please enter a question."
 
-    q = question.lower()
 
-    if "lesson" in q or "today" in q or "timetable" in q:
-        return (
-            "Today is Thursday:\n"
-            "9:00 – 11:00 (Cyber Security)\n"
-            "12:00 – 14:00 (Digital Forensics)"
-        )
 
-    if "room" in q or "rooms" in q:
-        return (
-            "For Cyber Security you are in room HW1/14\n"
-            "For Digital Forensics you are in room OA1/04"
-        )
 
-    if "it" in q or "support" in q:
-        return "You can contact IT Support at: itsupport@university.ac.uk"
-
-    if "course" in q:
-        return "Course information is available through the student portal, module handbook, or your course leader."
-
-    if "faq" in q:
-        return "You can ask about timetables, rooms, deadlines, accessibility, IT support, and general university FAQs."
-
-    return f"UI TEST: You asked '{question}'. The AI reply appears here."
-
+# Set up the Gradio interface
+interface = gr.Interface(
+    fn=mock_ask,
+    inputs="text",
+    outputs="text",
+    title="University Chatbot",
+    description="Anwsers FAQS for university website Powered by DeepSeek-R1."
+)
+interface.launch()
+import gradio as gr
 
 # =========================================================
-# SINGLE PLACE TO SWITCH FROM MOCK TO REAL AI LATER
-# =========================================================
-def bot_response(question):
-    return mock_ask(question)
-    # return ask_question(question)
-
-
-# =========================================================
-# UI LOGIC
-# =========================================================
-def login_user(username, password):
-    if username.strip() and password.strip():
-        return (
-            gr.update(visible=False),
-            gr.update(visible=True),
-            "Login successful. Welcome back."
-        )
-
-    return (
-        gr.update(visible=True),
-        gr.update(visible=False),
-        "Please enter both username and password."
-    )
-
-
-def send_message(user_message, history):
-    if history is None:
-        history = [{"role": "assistant", "content": "How may I assist you today?"}]
-
-    user_message = (user_message or "").strip()
-
-    if not user_message:
-        return "", history
-
-    answer = bot_response(user_message)
-
-    history = history + [
-        {"role": "user", "content": user_message},
-        {"role": "assistant", "content": answer}
-    ]
-
-    return "", history
-
-
-def quick_reply(choice, history):
-    if history is None:
-        history = [{"role": "assistant", "content": "How may I assist you today?"}]
-
-    answer = bot_response(choice)
-
-    history = history + [
-        {"role": "user", "content": choice},
-        {"role": "assistant", "content": answer}
-    ]
-
-    return history
-
-
-def attach_placeholder(history):
-    if history is None:
-        history = [{"role": "assistant", "content": "How may I assist you today?"}]
-
-    history = history + [
-        {
-            "role": "assistant",
-            "content": "Attach button is ready for future file upload support."
-        }
-    ]
-    return history
-
-
-# =========================================================
-# STYLING
+# LAYOUT-ONLY CSS
 # =========================================================
 custom_css = """
 body, .gradio-container {
@@ -348,11 +305,32 @@ footer {
     font-weight: 500;
 }
 
-.chatbot-wrap {
-    border: 2px solid #214253 !important;
-    border-radius: 16px !important;
-    background: white !important;
-    overflow: hidden !important;
+.chat-panel {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.message-ai {
+    background: #4ea8d3;
+    color: white;
+    border: 2px solid #214253;
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.message-user {
+    background: #05b84d;
+    color: white;
+    border: 2px solid #214253;
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 1rem;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .query-box input,
@@ -367,15 +345,10 @@ footer {
 }
 """
 
-
 # =========================================================
-# THIS REPLACES gr.Interface(...) BUT KEEPS interface = ...
+# LAYOUT ONLY
 # =========================================================
-with gr.Blocks(
-    css=custom_css,
-    title="University Chatbot"
-) as interface:
-
+with gr.Blocks() as interface:
     gr.HTML("""
         <div class="topbar">
             <h1>MyHud</h1>
@@ -384,55 +357,56 @@ with gr.Blocks(
     """)
 
     with gr.Column(elem_classes="main-wrap"):
-        status_msg = gr.Markdown("")
 
+        # -----------------------------------------
+        # TOP AREA - LOGIN MOCKUP + QUICK OPTIONS
+        # -----------------------------------------
         with gr.Row():
-            # LEFT PANEL
+            # LEFT SIDE
             with gr.Column(scale=1):
-                with gr.Group(visible=True) as login_panel:
+                with gr.Row():
+                    gr.HTML('<div class="ai-badge">AI</div>')
+                    gr.Textbox(
+                        value="To Access all Features Please Login.",
+                        interactive=False,
+                        show_label=False,
+                        elem_classes="ai-bar"
+                    )
+
+                with gr.Row():
+                    gr.HTML("<div></div>")
                     with gr.Row():
-                        gr.HTML('<div class="ai-badge">AI</div>')
+                        gr.Button("Language", elem_classes="secondary-btn")
+                        gr.Button("➜", elem_classes="arrow-btn")
+                        gr.Button("Accessibility", elem_classes="secondary-btn")
+                        gr.Button("➜", elem_classes="arrow-btn")
+
+                with gr.Row():
+                    with gr.Column(scale=1, min_width=120):
+                        gr.HTML('<div class="label-chip">Username</div>')
+                    with gr.Column(scale=4):
                         gr.Textbox(
-                            value="To Access all Features Please Login.",
-                            interactive=False,
+                            placeholder="Please Enter Username.......",
                             show_label=False,
-                            elem_classes="ai-bar"
+                            elem_classes="green-box"
                         )
 
-                    with gr.Row():
-                        gr.HTML("<div></div>")
-                        with gr.Row():
-                            gr.Button("Language", elem_classes="secondary-btn")
-                            gr.Button("➜", elem_classes="arrow-btn")
-                            gr.Button("Accessibility", elem_classes="secondary-btn")
-                            gr.Button("➜", elem_classes="arrow-btn")
+                with gr.Row():
+                    with gr.Column(scale=1, min_width=120):
+                        gr.HTML('<div class="label-chip">Password</div>')
+                    with gr.Column(scale=4):
+                        gr.Textbox(
+                            placeholder="Please Enter Password.......",
+                            type="password",
+                            show_label=False,
+                            elem_classes="green-box"
+                        )
 
-                    with gr.Row():
-                        with gr.Column(scale=1, min_width=120):
-                            gr.HTML('<div class="label-chip">Username</div>')
-                        with gr.Column(scale=4):
-                            username = gr.Textbox(
-                                placeholder="Please Enter Username.......",
-                                show_label=False,
-                                elem_classes="green-box"
-                            )
+                with gr.Row():
+                    gr.HTML("<div></div>")
+                    gr.Button("Login", elem_classes="primary-btn")
 
-                    with gr.Row():
-                        with gr.Column(scale=1, min_width=120):
-                            gr.HTML('<div class="label-chip">Password</div>')
-                        with gr.Column(scale=4):
-                            password = gr.Textbox(
-                                placeholder="Please Enter Password.......",
-                                type="password",
-                                show_label=False,
-                                elem_classes="green-box"
-                            )
-
-                    with gr.Row():
-                        gr.HTML("<div></div>")
-                        login_btn = gr.Button("Login", elem_classes="primary-btn")
-
-            # RIGHT PANEL
+            # RIGHT SIDE
             with gr.Column(scale=1):
                 with gr.Row():
                     gr.HTML('<div class="ai-badge">AI</div>')
@@ -444,148 +418,64 @@ with gr.Blocks(
                     )
 
                 with gr.Row():
-                    pre_q1 = gr.Button("Looking for Timetable information?", elem_classes="quick-btn")
-                    pre_q1_arrow = gr.Button("➜", elem_classes="arrow-btn")
+                    gr.Button("Looking for Timetable information?", elem_classes="quick-btn")
+                    gr.Button("➜", elem_classes="arrow-btn")
 
                 with gr.Row():
-                    pre_q2 = gr.Button("Course Information?", elem_classes="quick-btn")
-                    pre_q2_arrow = gr.Button("➜", elem_classes="arrow-btn")
+                    gr.Button("Course Information?", elem_classes="quick-btn")
+                    gr.Button("➜", elem_classes="arrow-btn")
 
                 with gr.Row():
-                    pre_q3 = gr.Button("Contact IT Support", elem_classes="quick-btn")
-                    pre_q3_arrow = gr.Button("➜", elem_classes="arrow-btn")
+                    gr.Button("Contact IT Support", elem_classes="quick-btn")
+                    gr.Button("➜", elem_classes="arrow-btn")
 
                 with gr.Row():
-                    pre_q4 = gr.Button("Click Here For Frequently Asked Questions", elem_classes="quick-btn")
-                    pre_q4_arrow = gr.Button("➜", elem_classes="arrow-btn")
+                    gr.Button("Click Here For Frequently Asked Questions", elem_classes="quick-btn")
+                    gr.Button("➜", elem_classes="arrow-btn")
 
-        with gr.Group(visible=False) as dashboard_panel:
+        # -----------------------------------------
+        # DASHBOARD / CHAT LAYOUT MOCKUP
+        # -----------------------------------------
+        gr.Markdown("### Dashboard Layout Preview")
+
+        with gr.Column(elem_classes="chat-panel"):
             with gr.Row():
                 gr.HTML('<div class="ai-badge">AI</div>')
-                gr.Textbox(
-                    value="How may I assist you today?",
-                    interactive=False,
-                    show_label=False,
-                    elem_classes="ai-bar"
-                )
-
-            chatbot = gr.Chatbot(
-                value=[{"role": "assistant", "content": "How may I assist you today?"}],
-                type="messages",
-                height=330,
-                elem_classes="chatbot-wrap"
-            )
+                gr.HTML('<div class="message-ai">How may I assist you today?</div>')
 
             with gr.Row():
-                dash_q1 = gr.Button("What lessons do I have today?", elem_classes="secondary-btn")
-                dash_q2 = gr.Button("Which rooms are my lessons in?", elem_classes="secondary-btn")
-                dash_q3 = gr.Button("See Full Timetable", elem_classes="secondary-btn")
-                dash_q3_arrow = gr.Button("➜", elem_classes="arrow-btn")
+                gr.HTML('<div style="width:54px;"></div>')
+                gr.HTML('<div class="message-user">What lessons do I have today?</div>')
+                gr.HTML('<div class="user-badge">S</div>')
+
+            with gr.Row():
+                gr.HTML('<div class="ai-badge">AI</div>')
+                gr.HTML('<div class="message-ai">Today is Thursday:<br>9:00 – 11:00 (Cyber Security)<br>12:00 – 14:00 (Digital Forensics)</div>')
+
+            with gr.Row():
+                gr.HTML('<div style="width:54px;"></div>')
+                gr.Button("See Full Timetable", elem_classes="secondary-btn")
+                gr.Button("➜", elem_classes="arrow-btn")
+
+            with gr.Row():
+                gr.HTML('<div class="ai-badge">AI</div>')
+                gr.HTML('<div class="message-ai">What else would you like me to assist you with?</div>')
 
             with gr.Row():
                 gr.HTML('<div class="info-tile">Next Lesson: 1hr 30 mins</div>')
                 gr.HTML('<div class="info-tile">Assignment Due: 05/03/26</div>')
 
+        # -----------------------------------------
+        # BOTTOM QUERY BAR LAYOUT
+        # -----------------------------------------
         with gr.Row():
-            query_box = gr.Textbox(
+            gr.Textbox(
                 placeholder="Please Enter A Query.....",
                 show_label=False,
                 scale=8,
                 elem_classes="query-box"
             )
-            attach_btn = gr.Button("Attach", elem_classes="attach-btn", scale=1)
-            send_btn = gr.Button("➜", elem_classes="arrow-btn", scale=1)
+            gr.Button("Attach", elem_classes="attach-btn", scale=1)
+            gr.Button("➜", elem_classes="arrow-btn", scale=1)
 
-    # EVENTS
-    login_btn.click(
-        fn=login_user,
-        inputs=[username, password],
-        outputs=[login_panel, dashboard_panel, status_msg]
-    )
-
-    send_btn.click(
-        fn=send_message,
-        inputs=[query_box, chatbot],
-        outputs=[query_box, chatbot]
-    )
-
-    query_box.submit(
-        fn=send_message,
-        inputs=[query_box, chatbot],
-        outputs=[query_box, chatbot]
-    )
-
-    attach_btn.click(
-        fn=attach_placeholder,
-        inputs=[chatbot],
-        outputs=[chatbot]
-    )
-
-    pre_q1.click(
-        fn=lambda history: quick_reply("Looking for timetable information?", history),
-        inputs=[chatbot],
-        outputs=[chatbot]
-    )
-    pre_q1_arrow.click(
-        fn=lambda history: quick_reply("Looking for timetable information?", history),
-        inputs=[chatbot],
-        outputs=[chatbot]
-    )
-
-    pre_q2.click(
-        fn=lambda history: quick_reply("Course Information?", history),
-        inputs=[chatbot],
-        outputs=[chatbot]
-    )
-    pre_q2_arrow.click(
-        fn=lambda history: quick_reply("Course Information?", history),
-        inputs=[chatbot],
-        outputs=[chatbot]
-    )
-
-    pre_q3.click(
-        fn=lambda history: quick_reply("Contact IT Support", history),
-        inputs=[chatbot],
-        outputs=[chatbot]
-    )
-    pre_q3_arrow.click(
-        fn=lambda history: quick_reply("Contact IT Support", history),
-        inputs=[chatbot],
-        outputs=[chatbot]
-    )
-
-    pre_q4.click(
-        fn=lambda history: quick_reply("FAQ", history),
-        inputs=[chatbot],
-        outputs=[chatbot]
-    )
-    pre_q4_arrow.click(
-        fn=lambda history: quick_reply("FAQ", history),
-        inputs=[chatbot],
-        outputs=[chatbot]
-    )
-
-    dash_q1.click(
-        fn=lambda history: quick_reply("What lessons do I have today?", history),
-        inputs=[chatbot],
-        outputs=[chatbot]
-    )
-
-    dash_q2.click(
-        fn=lambda history: quick_reply("Which rooms are my lessons in?", history),
-        inputs=[chatbot],
-        outputs=[chatbot]
-    )
-
-    dash_q3.click(
-        fn=lambda history: quick_reply("Show me my full timetable", history),
-        inputs=[chatbot],
-        outputs=[chatbot]
-    )
-    dash_q3_arrow.click(
-        fn=lambda history: quick_reply("Show me my full timetable", history),
-        inputs=[chatbot],
-        outputs=[chatbot]
-    )
-
-interface.launch()
+interface.launch(css=custom_css)

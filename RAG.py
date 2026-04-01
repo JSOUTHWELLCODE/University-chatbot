@@ -1,7 +1,129 @@
-#import ollama
+import ollama
 import re
 import gradio as gr
 #from concurrent.futures import ThreadPoolExecutor
+
+custom_css = """
+.topbar {
+    background-color: #f0f0f0;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.main-wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+.ai-badge {
+    background-color: #007bff;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+.ai-bar {
+    background-color: #e3f2fd;
+    border: 1px solid #007bff;
+}
+.primary-btn {
+    background-color: #28a745;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.secondary-btn {
+    background-color: #6c757d;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.quick-btn {
+    background-color: #17a2b8;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.arrow-btn {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+}
+.green-box {
+    border: 2px solid #28a745;
+    border-radius: 5px;
+    padding: 8px;
+}
+.label-chip {
+    background-color: #e9ecef;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+.chat-panel {
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    max-height: 400px;
+    overflow-y: auto;
+}
+.message-ai {
+    background-color: #e3f2fd;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 5px 0;
+}
+.message-user {
+    background-color: #c8e6c9;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 5px 0;
+}
+.user-badge {
+    background-color: #4caf50;
+    color: white;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-weight: bold;
+}
+.info-tile {
+    background-color: #fff3cd;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 5px;
+    flex: 1;
+}
+.query-box {
+    border: 2px solid #007bff;
+    border-radius: 5px;
+    padding: 10px;
+}
+.attach-btn {
+    background-color: #6c757d;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.close-btn {
+    cursor: pointer;
+    font-size: 24px;
+    font-weight: bold;
+}
+"""
 
 '''
 
@@ -105,245 +227,6 @@ def ask_question(question):
     return answer
 
 '''
-
-
-def mock_ask(question):
-    return f"UI TEST: You asked '{question}'. The ai reply here."
-
-
-
-
-
-# Set up the Gradio interface
-interface = gr.Interface(
-    fn=mock_ask,
-    inputs="text",
-    outputs="text",
-    title="University Chatbot",
-    description="Anwsers FAQS for university website Powered by DeepSeek-R1."
-)
-interface.launch()
-import gradio as gr
-
-# =========================================================
-# LAYOUT-ONLY CSS
-# =========================================================
-custom_css = """
-body, .gradio-container {
-    background: #e7e7e7 !important;
-    font-family: "Segoe UI", Arial, sans-serif;
-}
-
-.gradio-container {
-    max-width: 1280px !important;
-    margin: 0 auto !important;
-    padding: 0 !important;
-}
-
-footer {
-    display: none !important;
-}
-
-.topbar {
-    background: #145f82;
-    color: white;
-    padding: 18px 22px;
-    border-bottom: 2px solid #0d445b;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.topbar h1 {
-    margin: 0;
-    font-size: 2rem;
-    font-weight: 500;
-}
-
-.close-btn {
-    width: 42px;
-    height: 42px;
-    border-radius: 10px;
-    background: #ff1b1b;
-    color: white;
-    border: 2px solid #0d445b;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.35rem;
-    font-weight: bold;
-}
-
-.main-wrap {
-    padding: 18px;
-}
-
-.ai-badge {
-    width: 54px;
-    height: 54px;
-    min-width: 54px;
-    border-radius: 50%;
-    background: #0b79c7;
-    color: white;
-    border: 2px solid #183848;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.05rem;
-    margin-top: 3px;
-}
-
-.user-badge {
-    width: 54px;
-    height: 54px;
-    min-width: 54px;
-    border-radius: 50%;
-    background: #05b84d;
-    color: white;
-    border: 2px solid #183848;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.05rem;
-    margin-top: 3px;
-}
-
-.ai-bar textarea,
-.ai-bar input {
-    background: #4ea8d3 !important;
-    color: white !important;
-    border: 2px solid #214253 !important;
-    border-radius: 12px !important;
-    font-size: 1.05rem !important;
-}
-
-.ai-bar textarea::placeholder,
-.ai-bar input::placeholder {
-    color: rgba(255,255,255,0.96) !important;
-}
-
-.green-box input,
-.green-box textarea {
-    background: #05b84d !important;
-    color: white !important;
-    border: 2px solid #214253 !important;
-    border-radius: 10px !important;
-    font-size: 1rem !important;
-    min-height: 48px !important;
-}
-
-.green-box input::placeholder,
-.green-box textarea::placeholder {
-    color: rgba(255,255,255,0.96) !important;
-}
-
-.label-chip {
-    background: #05b84d;
-    color: white;
-    border: 2px solid #214253;
-    border-radius: 10px;
-    padding: 12px 14px;
-    text-align: center;
-    font-size: 1rem;
-    font-weight: 500;
-}
-
-.primary-btn button {
-    background: #1173b8 !important;
-    color: white !important;
-    border: 2px solid #183848 !important;
-    border-radius: 12px !important;
-    min-height: 50px !important;
-    font-size: 1.05rem !important;
-}
-
-.secondary-btn button {
-    background: #4ea8d3 !important;
-    color: white !important;
-    border: 2px solid #214253 !important;
-    border-radius: 12px !important;
-    min-height: 50px !important;
-    font-size: 1rem !important;
-}
-
-.quick-btn button {
-    background: #4ea8d3 !important;
-    color: white !important;
-    border: 2px solid #214253 !important;
-    border-radius: 12px !important;
-    min-height: 58px !important;
-    font-size: 1rem !important;
-    text-align: left !important;
-    justify-content: flex-start !important;
-}
-
-.arrow-btn button {
-    background: #145f82 !important;
-    color: white !important;
-    border: 2px solid #214253 !important;
-    border-radius: 10px !important;
-    min-height: 50px !important;
-    font-size: 1.2rem !important;
-}
-
-.attach-btn button {
-    background: white !important;
-    color: black !important;
-    border: 2px solid #214253 !important;
-    border-radius: 8px !important;
-    min-height: 44px !important;
-}
-
-.info-tile {
-    background: #145f82;
-    color: white;
-    border: 2px solid #0d445b;
-    border-radius: 12px;
-    padding: 16px 20px;
-    font-size: 1.05rem;
-    text-align: center;
-    font-weight: 500;
-}
-
-.chat-panel {
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-}
-
-.message-ai {
-    background: #4ea8d3;
-    color: white;
-    border: 2px solid #214253;
-    border-radius: 12px;
-    padding: 14px 16px;
-    font-size: 1rem;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.message-user {
-    background: #05b84d;
-    color: white;
-    border: 2px solid #214253;
-    border-radius: 12px;
-    padding: 14px 16px;
-    font-size: 1rem;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.query-box input,
-.query-box textarea {
-    border: 2px solid #214253 !important;
-    border-radius: 0 !important;
-    min-height: 44px !important;
-}
-
-.gr-box, .gr-group, .gr-panel {
-    box-shadow: none !important;
-}
-"""
 
 # =========================================================
 # LAYOUT ONLY

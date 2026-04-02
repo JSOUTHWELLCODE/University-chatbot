@@ -7,7 +7,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_chroma import Chroma
 from langchain_ollama import OllamaLLM , OllamaEmbeddings
 import os
-from VectorStore import returnDB
+from VectorStore import VectorStore
 
 from Fuzzymatching import Fuzzymatch
 
@@ -17,14 +17,24 @@ from Fuzzymatching import Fuzzymatch
 
 
 class chatbot:
-    def __init__(self, persist_path, excel_path, llm_model, embed_model="nomic-embed-text"):
+    def __init__(self, persist_path, pdf_path, excel_path, llm_model, embed_model="nomic-embed-text"):
         self.persist_path = persist_path
+        self.pdf_path = pdf_path # Save it to the class
         self.matcher = Fuzzymatch(excel_path)
-        self.embedding_function = OllamaEmbeddings(model=embed_model)
         self.llm = OllamaLLM(model=llm_model)
 
-        self.vector_db = returnDB(self.embedding_function, self.persist_path)
+        # Now pass it to your refactored VectorStore class
+        self.kb_manager = VectorStore(
+            persist_path=self.persist_path, 
+            path_to_pdf=self.pdf_path, 
+            embed_model=embed_model
+        )
+        
+        self.vector_db = self.kb_manager.returnDB()
         self.retriever = self.vector_db.as_retriever()
+
+
+       
 
     def query_deepseek(self, question, context):
         # 1. Format the input prompt into a single string
@@ -108,10 +118,18 @@ class chatbot:
 
 
 if __name__ == "__main__":
+     # Define your paths
+     p_path = "/Users/Jonny/Desktop/University-chatbot/PDF faqs/University_Knowledge_Base"
+     pdf_folder = "/Users/Jonny/Desktop/University-chatbot/PDF faqs" # Added this
+     e_path = "/Users/Jonny/Desktop/University-chatbot/Contact emails/CONTACT EMAILS.xlsx"
 
-     my_bot = chatbot(persist_path="/Users/Jonny/Desktop/University-chatbot/PDF faqs/University_Knowledge_Base", excel_path =r"/Users/Jonny/Desktop/University-chatbot/Contact emails/CONTACT EMAILS.xlsx", llm_model="deepseek-r1:1.5b")
+     my_bot = chatbot(
+         persist_path=p_path, 
+         pdf_path=pdf_folder, 
+         excel_path=e_path, 
+         llm_model="deepseek-r1:1.5b"
+     )
      my_bot.launch_ui()
-
 
 
 # To run the bot:

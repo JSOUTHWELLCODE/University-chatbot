@@ -79,6 +79,8 @@ class chatbot:
     def retrieve_context(self, question):
         # Retrieve relevant documents
         results = self.retriever.invoke(question)
+
+        print(f"DEBUG: Found {len(results)} chunks for search.")
         # Combine the retrieved content
         context = "\n\n".join([doc.page_content for doc in results])
         return context
@@ -86,6 +88,8 @@ class chatbot:
     def ask_question(self, question):
         # Retrieve context and generate an answer using RAG
         fuzzy_result = self.matcher.find_department(question)
+
+        
         
         # If a match was found, we add it to our knowledge
         if fuzzy_result:

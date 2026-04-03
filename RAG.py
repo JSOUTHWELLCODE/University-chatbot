@@ -124,7 +124,7 @@ class chatbot:
 if __name__ == "__main__":
      # Define your paths
      p_path = "/Users/Jonny/Desktop/University-chatbot/PDF faqs/University_Knowledge_Base"
-     pdf_folder = "/Users/Jonny/Desktop/University-chatbot/PDF faqs" # Added this
+     pdf_folder = "/Users/Jonny/Desktop/University-chatbot/PDF faqs" 
      e_path = "/Users/Jonny/Desktop/University-chatbot/Contact emails/CONTACT EMAILS.xlsx"
 
      my_bot = chatbot(

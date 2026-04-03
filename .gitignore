@@ -5,7 +5,7 @@ env/
 __pycache__/
 *.pyc
 
-# Your Chroma Database (The "Memory" that stays local)
+# Chroma Database 
 university_db/
 chroma_data/
 
@@ -24,3 +24,12 @@ University_Knowledge_Base/
 # Ignore SQLite temporary files (important for Chroma)
 *.sqlite3-shm
 *.sqlite3-wal
+
+#unit testing
+test_fuzzymatch.py
+test_RAG.py
+test_vectorstore.py
+
+
+
+

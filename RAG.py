@@ -16,7 +16,7 @@ from Fuzzymatching import Fuzzymatch
 
 
 
-class chatbot:
+class Chatbot:
     def __init__(self, persist_path, pdf_path, excel_path, llm_model, embed_model="nomic-embed-text"):
         self.persist_path = persist_path
         self.pdf_path = pdf_path # Save it to the class

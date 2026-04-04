@@ -22,7 +22,7 @@ class VectorStore:
 
 
     def returnDB(self):
-        # 1. Check if the folder exists AND has files in it
+        #  Check if the folder exists AND has files in it
         sqlite_db_path = os.path.join(self.persist_path, "chroma.sqlite3")
         
         if os.path.exists(sqlite_db_path):
@@ -61,16 +61,16 @@ class VectorStore:
     
 
     def add_new_pdf(self, pdf_path, vectorstore):
-        # 1. Load the single new PDF using the path provided
+        #  Load the single new PDF using the path provided
         loader = PyMuPDFLoader(pdf_path)
         new_docs = loader.load()
 
-        # 2. Split it into chunks (using the same settings as your init)
-        # It's best to use self.text_splitter if you defined it in __init__
+        #  Split it into chunks (using the same settings as your init)
+        
         text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
         new_chunks = text_splitter.split_documents(new_docs)
 
-        # 3. Add to the existing Chroma object passed into the method
+        #  Add to the existing Chroma object 
         vectorstore.add_documents(new_chunks)
         
         print(f" Successfully added {len(new_chunks)} chunks from {pdf_path}")
@@ -79,7 +79,7 @@ class VectorStore:
   
 
     def delete_database(self):
-    # It's often safer to check for the whole directory
+   
     
      if os.path.exists(persist_path):
         shutil.rmtree(persist_path)
@@ -108,15 +108,12 @@ if __name__ == "__main__":
     persist_path = r"/Users/Jonny/Desktop/University-chatbot/PDF faqs/University_Knowledge_Base"
     path_to_PDF = r"/Users/Jonny/Desktop/University-chatbot/PDF faqs"
 
-    # 1. Create the Instance (This calls __init__)
-    # Ensure you use 'path_to_pdf' as the argument name to match your class
     kb_manager = VectorStore(persist_path, embed_model="nomic-embed-text", path_to_pdf=path_to_PDF)
 
-    # 2. Test the Database Loading/Creation
-    # This triggers the logic to save chunks to your local ChromaDB
+
     vector_db = kb_manager.returnDB()
 
-    # 3. Test Retrieval (Sprint 2: "Basic Retrieval" task)
+ 
     if vector_db:
         retriever = vector_db.as_retriever(search_kwargs={"k": 3})
         print("✅ Retriever is ready for testing!")

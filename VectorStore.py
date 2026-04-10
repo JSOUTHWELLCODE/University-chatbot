@@ -7,9 +7,6 @@ from langchain_ollama import OllamaLLM, OllamaEmbeddings
 import shutil
 
 
-#path = r"Z:\Group project\PDF faqs"
-
-
 
 
 
@@ -39,9 +36,9 @@ class VectorStore:
 
 
         else: 
-            print("🆕 No database found. Creating a new one...")
+            print(" No database found. Creating a new one...")
 
-            # Use self.loader that you defined in __init__
+            _
             documents = self.loader.load()
 
             # Split the document into smaller chunks
@@ -93,17 +90,6 @@ class VectorStore:
 
 
 if __name__ == "__main__":
-    '''
-    # 1. Initialize/Load the Database
-    vector_db = returnDB(embedding_function, persist_path)
-
-    # 2. Create the Retriever 
-    retriever = vector_db.as_retriever(search_kwargs={"k": 3})
-
-    #Add new chunks to the Data base 
-    #add_new_pdf_to_db("/Users/Jonny/Desktop/University-chatbot/PDF faqs/IT_SUPPORT.pdf", vector_db)
-
-    '''
 
     persist_path = r"/Users/Jonny/Desktop/University-chatbot/PDF faqs/University_Knowledge_Base"
     path_to_PDF = r"/Users/Jonny/Desktop/University-chatbot/PDF faqs"

@@ -23,7 +23,7 @@ class Chatbot:
         self.matcher = Fuzzymatch(excel_path)
         self.llm = OllamaLLM(model=llm_model)
 
-        # Now pass it to your refactored VectorStore class
+        
         self.kb_manager = VectorStore(
             persist_path=self.persist_path, 
             path_to_pdf=self.pdf_path, 
@@ -37,10 +37,7 @@ class Chatbot:
        
 
     def query_deepseek(self, question, context):
-        # 1. Format the input prompt into a single string
-        
-      #  if not context or "No relevent content" in context:
-         #   return "I am sorry I dont have info on that please contact the student hub"
+      
         
         
         
@@ -69,7 +66,7 @@ class Chatbot:
         )
 
         
-        # 2. Use LangChain's .invoke() on the llm object
+        
         response = self.llm.invoke(prompt)
         
         # LangChain returns a string directly
@@ -91,19 +88,19 @@ class Chatbot:
 
         
         
-        # If a match was found, we add it to our knowledge
+        # If a match was found, add it to our knowledge
         if fuzzy_result:
             contact_info = f"\nNote: The official contact for this department is {fuzzy_result}."
         else:
             contact_info = ""
 
-        # --- 3. Step Two: Get general context from Vector DB ---
+        #  Get general context from Vector DB 
         context = self.retrieve_context(question)
         
         # Combine the Excel data + the Vector DB data
         combined_context = context + contact_info
         
-        # --- 4. Step Three: Send everything to DeepSeek ---
+        #  Send everything to DeepSeek 
         answer = self.query_deepseek(question, combined_context)
         return answer
 

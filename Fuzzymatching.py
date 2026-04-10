@@ -2,9 +2,6 @@ import pandas as pd
 
 from thefuzz import fuzz, process  
 
-#Windows df = pd.read_excel("Z:\Group project\Contact emails\CONTACT EMAILS.xlsx")
-#df = pd.read_excel("/Users/Jonny/Desktop/University-chatbot/Contact emails/Contact Emails.xlsx")
-
 
 
 class Fuzzymatch:

@@ -122,7 +122,7 @@ interface = gr.Interface(
     title="University Chatbot",
     description="Anwsers FAQS for university website Powered by DeepSeek-R1."
 )
-interface.launch()
+#interface.launch()
 import gradio as gr
 
 # =========================================================

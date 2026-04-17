@@ -1,97 +1,22 @@
-import gradio as gr 
-import html
+"""import ollama"""
+import re
+import gradio as gr
+#from concurrent.futures import ThreadPoolExecutor
 
-# =========================================================
-# SIMPLE DEMO LOGIC
-# Replace mock_reply(message) with ask_question(message) later
-# =========================================================
-def mock_reply(message):
-    q = message.lower().strip()
-
-    if "lesson" in q or "timetable" in q:
-        return "Today is Thursday:\n9:00 – 11:00 (Cyber Security)\n12:00 – 14:00 (Digital Forensics)"
-    elif "room" in q:
-        return "For Cyber Security you are in room HW1/14.\nFor Digital Forensics you are in room OA1/04."
-    elif "course" in q:
-        return "I can help with course details, modules, entry requirements, and study information."
-    elif "it" in q or "support" in q:
-        return "You can contact IT Support through the student help desk or the university support portal."
-    elif "faq" in q:
-        return "I can help with FAQs about enrolment, timetables, support, and student services."
-    else:
-        return f"I can help with: {message}"
+def mock_ask(question):
+    return f"UI TEST: You asked '{question}'. The ai reply here."
 
 
-def login_demo(username, password):
-    if not username or not password:
-        return "Please enter both username and password."
-    return "Login demo only. Connect this button to your real authentication system."
-
-
-# =========================================================
-# CHAT RENDERER
-# =========================================================
-def render_chat(history):
-    chat_html = '<div class="chat-wrap">'
-
-    for item in history:
-        role = item["role"]
-        text = html.escape(item["content"]).replace("\n", "<br>")
-
-        if role == "assistant":
-            chat_html += f"""
-            <div class="msg-row ai-row">
-                <div class="circle ai-circle">AI</div>
-                <div class="bubble ai-bubble">{text}</div>
-            </div>
-            """
-        else:
-            chat_html += f"""
-            <div class="msg-row user-row">
-                <div class="user-spacer"></div>
-                <div class="bubble user-bubble">{text}</div>
-                <div class="circle user-circle">S</div>
-            </div>
-            """
-
-    chat_html += "</div>"
-    return chat_html
-
-
-def send_message(message, history):
-    if not message or not message.strip():
-        return history, "", render_chat(history)
-
-    history = history + [{"role": "user", "content": message}]
-    reply = mock_reply(message)
-    history = history + [{"role": "assistant", "content": reply}]
-
-    return history, "", render_chat(history)
-
-
-def quick_send(text, history):
-    return send_message(text, history)
-
-
-def add_attachment_notice(history):
-    history = history + [
-        {"role": "assistant", "content": "Attachment feature placeholder."}
-    ]
-    return history, render_chat(history)
-
-
-# =========================================================
-# STARTER CHAT
-# =========================================================
-initial_history = [
-    {"role": "assistant", "content": "How may I assist you today?"},
-    {"role": "user", "content": "What lessons do I have today?"},
-    {
-        "role": "assistant",
-        "content": "Today is Thursday:\n9:00 – 11:00 (Cyber Security)\n12:00 – 14:00 (Digital Forensics)"
-    },
-    {"role": "assistant", "content": "What else would you like me to assist you with?"}
-]
+# Set up the Gradio interface
+interface = gr.Interface(
+    fn=mock_ask,
+    inputs="text",
+    outputs="text",
+    title="University Chatbot",
+    description="Anwsers FAQS for university website Powered by DeepSeek-R1."
+)
+#interface.launch()
+#import gradio as gr
 
 # =========================================================
 # CSS

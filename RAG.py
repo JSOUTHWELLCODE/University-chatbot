@@ -1,26 +1,5 @@
-"""import ollama"""
-import re
 import gradio as gr
-#from concurrent.futures import ThreadPoolExecutor
 
-def mock_ask(question):
-    return f"UI TEST: You asked '{question}'. The ai reply here."
-
-
-# Set up the Gradio interface
-interface = gr.Interface(
-    fn=mock_ask,
-    inputs="text",
-    outputs="text",
-    title="University Chatbot",
-    description="Anwsers FAQS for university website Powered by DeepSeek-R1."
-)
-#interface.launch()
-#import gradio as gr
-
-# =========================================================
-# CSS
-# =========================================================
 custom_css = """
 body, .gradio-container {
     background: #e7e7e7 !important;
@@ -71,10 +50,6 @@ footer {
     padding: 16px;
 }
 
-.panel {
-    min-height: 300px;
-}
-
 .circle {
     width: 54px;
     height: 54px;
@@ -102,11 +77,12 @@ footer {
     color: white !important;
     border: 2px solid #214253 !important;
     border-radius: 12px !important;
-    font-size: 1.05rem !important;
 }
 
 .notice-box textarea::placeholder,
-.notice-box input::placeholder {
+.notice-box input::placeholder,
+.input-box textarea::placeholder,
+.input-box input::placeholder {
     color: rgba(255,255,255,0.95) !important;
 }
 
@@ -116,13 +92,7 @@ footer {
     color: white !important;
     border: 2px solid #214253 !important;
     border-radius: 10px !important;
-    font-size: 1rem !important;
     min-height: 48px !important;
-}
-
-.input-box textarea::placeholder,
-.input-box input::placeholder {
-    color: rgba(255,255,255,0.95) !important;
 }
 
 .label-chip {
@@ -136,23 +106,21 @@ footer {
     font-weight: 500;
 }
 
-.primary-btn button {
-    background: #1173b8 !important;
-    color: white !important;
-    border: 2px solid #183848 !important;
-    border-radius: 12px !important;
-    min-height: 50px !important;
-    font-size: 1.05rem !important;
-}
-
+.primary-btn button,
 .secondary-btn button,
 .quick-btn button,
 .arrow-btn button,
-.attach-btn button,
 .send-btn button {
     border-radius: 12px !important;
     border: 2px solid #214253 !important;
     min-height: 50px !important;
+}
+
+.primary-btn button,
+.arrow-btn button,
+.send-btn button {
+    background: #145f82 !important;
+    color: white !important;
 }
 
 .secondary-btn button,
@@ -168,21 +136,8 @@ footer {
     font-size: 1rem !important;
 }
 
-.arrow-btn button,
-.send-btn button {
-    background: #145f82 !important;
-    color: white !important;
-    min-width: 54px !important;
-    font-size: 1.2rem !important;
-}
-
-.attach-btn button {
-    background: white !important;
-    color: black !important;
-}
-
-.chat-wrap {
-    padding: 6px 0;
+.chat-area {
+    margin-top: 8px;
 }
 
 .msg-row {
@@ -209,8 +164,8 @@ footer {
     font-size: 1rem;
     line-height: 1.4;
     box-sizing: border-box;
-    max-width: 86%;
     flex: 1;
+    max-width: 86%;
 }
 
 .ai-bubble {
@@ -219,10 +174,6 @@ footer {
 
 .user-bubble {
     background: #05b84d;
-}
-
-.chat-panel {
-    margin-top: 8px;
 }
 
 .info-tile {
@@ -244,12 +195,7 @@ footer {
 }
 """
 
-# =========================================================
-# UI
-# =========================================================
-with gr.Blocks(css=custom_css) as interface:
-    chat_state = gr.State(initial_history)
-
+with gr.Blocks(css=custom_css) as demo:
     gr.HTML("""
         <div class="topbar">
             <h1>MyHud</h1>
@@ -259,15 +205,13 @@ with gr.Blocks(css=custom_css) as interface:
 
     with gr.Column(elem_classes="main-wrap"):
 
-        # -------------------------------------------------
-        # TOP AREA
-        # -------------------------------------------------
+        # Top section
         with gr.Row():
-            # LEFT PANEL - LOGIN
-            with gr.Column(scale=1, elem_classes="panel"):
+            # Left side
+            with gr.Column(scale=1):
                 with gr.Row():
                     gr.HTML('<div class="circle ai-circle">AI</div>')
-                    login_notice = gr.Textbox(
+                    gr.Textbox(
                         value="To Access all Features Please Login.",
                         interactive=False,
                         show_label=False,
@@ -284,7 +228,7 @@ with gr.Blocks(css=custom_css) as interface:
                     with gr.Column(scale=1, min_width=120):
                         gr.HTML('<div class="label-chip">Username</div>')
                     with gr.Column(scale=4):
-                        username = gr.Textbox(
+                        gr.Textbox(
                             placeholder="Please Enter Username......",
                             show_label=False,
                             elem_classes="input-box"
@@ -294,7 +238,7 @@ with gr.Blocks(css=custom_css) as interface:
                     with gr.Column(scale=1, min_width=120):
                         gr.HTML('<div class="label-chip">Password</div>')
                     with gr.Column(scale=4):
-                        password = gr.Textbox(
+                        gr.Textbox(
                             placeholder="Please Enter Password......",
                             type="password",
                             show_label=False,
@@ -303,10 +247,10 @@ with gr.Blocks(css=custom_css) as interface:
 
                 with gr.Row():
                     gr.HTML("<div></div>")
-                    login_btn = gr.Button("Login", elem_classes="primary-btn")
+                    gr.Button("Login", elem_classes="primary-btn")
 
-            # RIGHT PANEL - QUICK HELP
-            with gr.Column(scale=1, elem_classes="panel"):
+            # Right side
+            with gr.Column(scale=1):
                 with gr.Row():
                     gr.HTML('<div class="circle ai-circle">AI</div>')
                     gr.Textbox(
@@ -317,103 +261,89 @@ with gr.Blocks(css=custom_css) as interface:
                     )
 
                 with gr.Row():
-                    quick_1 = gr.Button("Looking for Timetable information?", elem_classes="quick-btn")
+                    gr.Button("Looking for Timetable information?", elem_classes="quick-btn")
                     gr.Button("➜", elem_classes="arrow-btn")
 
                 with gr.Row():
-                    quick_2 = gr.Button("Course Information?", elem_classes="quick-btn")
+                    gr.Button("Course Information?", elem_classes="quick-btn")
                     gr.Button("➜", elem_classes="arrow-btn")
 
                 with gr.Row():
-                    quick_3 = gr.Button("Contact IT Support", elem_classes="quick-btn")
+                    gr.Button("Contact IT Support", elem_classes="quick-btn")
                     gr.Button("➜", elem_classes="arrow-btn")
 
                 with gr.Row():
-                    quick_4 = gr.Button("Click Here For Frequently Asked Questions", elem_classes="quick-btn")
+                    gr.Button("Click Here For Frequently Asked Questions", elem_classes="quick-btn")
                     gr.Button("➜", elem_classes="arrow-btn")
 
-        # -------------------------------------------------
-        # CHAT / DASHBOARD
-        # -------------------------------------------------
-        with gr.Column(elem_classes="chat-panel"):
-            chat_html = gr.HTML(render_chat(initial_history))
+        # Chat preview
+        with gr.Column(elem_classes="chat-area"):
+            gr.HTML("""
+                <div class="msg-row">
+                    <div class="circle ai-circle">AI</div>
+                    <div class="bubble ai-bubble">How may I assist you today?</div>
+                </div>
 
-            with gr.Row():
-                full_tt = gr.Button("See Full Timetable", elem_classes="secondary-btn")
-                gr.Button("➜", elem_classes="arrow-btn")
+                <div class="msg-row user-row">
+                    <div class="user-spacer"></div>
+                    <div class="bubble user-bubble">What lessons do I have today?</div>
+                    <div class="circle user-circle">S</div>
+                </div>
 
-            with gr.Row():
-                gr.HTML('<div class="info-tile">Next Lesson: 1hr 30 mins</div>')
-                gr.HTML('<div class="info-tile">Assignment Due: 05/03/26</div>')
+                <div class="msg-row">
+                    <div class="circle ai-circle">AI</div>
+                    <div class="bubble ai-bubble">
+                        Today is Thursday:<br>
+                        9:00 – 11:00 (Cyber Security)<br>
+                        12:00 – 14:00 (Digital Forensics)
+                    </div>
+                </div>
 
-        # -------------------------------------------------
-        # BOTTOM QUERY BAR
-        # -------------------------------------------------
+                <div class="msg-row">
+                    <div style="width:54px;"></div>
+                    <div style="display:flex; gap:12px; width:100%; max-width:420px;">
+                        <button style="
+                            background:#4ea8d3;
+                            color:white;
+                            border:2px solid #214253;
+                            border-radius:12px;
+                            min-height:50px;
+                            padding:0 18px;
+                            font-size:1rem;
+                            cursor:pointer;
+                        ">See Full Timetable</button>
+
+                        <button style="
+                            background:#145f82;
+                            color:white;
+                            border:2px solid #214253;
+                            border-radius:12px;
+                            min-height:50px;
+                            min-width:54px;
+                            font-size:1.2rem;
+                            cursor:pointer;
+                        ">➜</button>
+                    </div>
+                </div>
+
+                <div class="msg-row">
+                    <div class="circle ai-circle">AI</div>
+                    <div class="bubble ai-bubble">What else would you like me to assist you with?</div>
+                </div>
+            """)
+
         with gr.Row():
-            query_box = gr.Textbox(
+            gr.HTML('<div class="info-tile">Next Lesson: 1hr 30 mins</div>')
+            gr.HTML('<div class="info-tile">Assignment Due: 05/03/26</div>')
+
+        # Bottom query bar
+        with gr.Row():
+            gr.Textbox(
                 placeholder="Please Enter A Query.....",
                 show_label=False,
                 scale=8,
                 elem_classes="query-box"
             )
-            attach_btn = gr.Button("Attach", elem_classes="attach-btn", scale=1)
-            send_btn = gr.Button("➜", elem_classes="send-btn", scale=1)
+            gr.Button("➜", elem_classes="send-btn", scale=1)
 
-    # -------------------------------------------------
-    # ACTIONS
-    # -------------------------------------------------
-    login_btn.click(
-        fn=login_demo,
-        inputs=[username, password],
-        outputs=login_notice
-    )
-
-    send_btn.click(
-        fn=send_message,
-        inputs=[query_box, chat_state],
-        outputs=[chat_state, query_box, chat_html]
-    )
-
-    query_box.submit(
-        fn=send_message,
-        inputs=[query_box, chat_state],
-        outputs=[chat_state, query_box, chat_html]
-    )
-
-    quick_1.click(
-        fn=lambda history: quick_send("What lessons do I have today?", history),
-        inputs=chat_state,
-        outputs=[chat_state, query_box, chat_html]
-    )
-
-    quick_2.click(
-        fn=lambda history: quick_send("Tell me about course information.", history),
-        inputs=chat_state,
-        outputs=[chat_state, query_box, chat_html]
-    )
-
-    quick_3.click(
-        fn=lambda history: quick_send("I need IT support.", history),
-        inputs=chat_state,
-        outputs=[chat_state, query_box, chat_html]
-    )
-
-    quick_4.click(
-        fn=lambda history: quick_send("Show me frequently asked questions.", history),
-        inputs=chat_state,
-        outputs=[chat_state, query_box, chat_html]
-    )
-
-    full_tt.click(
-        fn=lambda history: quick_send("Show me my full timetable.", history),
-        inputs=chat_state,
-        outputs=[chat_state, query_box, chat_html]
-    )
-
-    attach_btn.click(
-        fn=add_attachment_notice,
-        inputs=chat_state,
-        outputs=[chat_state, chat_html]
-    )
-
-interface.launch()
+demo.launch()

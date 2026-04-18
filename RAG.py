@@ -7,7 +7,7 @@ body, .gradio-container {
 }
 
 .gradio-container {
-    max-width: 1280px !important;
+    max-width: 650px !important;
     margin: 0 auto !important;
     padding: 0 !important;
 }
@@ -47,7 +47,23 @@ footer {
 }
 
 .main-wrap {
-    padding: 16px;
+    padding: 14px;
+}
+
+.chat-area {
+    min-height: 460px;
+    margin-top: 8px;
+}
+
+.msg-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.user-row {
+    justify-content: flex-end;
 }
 
 .circle {
@@ -71,86 +87,6 @@ footer {
     background: #05b84d;
 }
 
-.notice-box textarea,
-.notice-box input {
-    background: #4ea8d3 !important;
-    color: white !important;
-    border: 2px solid #214253 !important;
-    border-radius: 12px !important;
-}
-
-.notice-box textarea::placeholder,
-.notice-box input::placeholder,
-.input-box textarea::placeholder,
-.input-box input::placeholder {
-    color: rgba(255,255,255,0.95) !important;
-}
-
-.input-box textarea,
-.input-box input {
-    background: #05b84d !important;
-    color: white !important;
-    border: 2px solid #214253 !important;
-    border-radius: 10px !important;
-    min-height: 48px !important;
-}
-
-.label-chip {
-    background: #05b84d;
-    color: white;
-    border: 2px solid #214253;
-    border-radius: 10px;
-    padding: 12px 14px;
-    text-align: center;
-    font-size: 1rem;
-    font-weight: 500;
-}
-
-.primary-btn button,
-.secondary-btn button,
-.quick-btn button,
-.arrow-btn button,
-.send-btn button {
-    border-radius: 12px !important;
-    border: 2px solid #214253 !important;
-    min-height: 50px !important;
-}
-
-.primary-btn button,
-.arrow-btn button,
-.send-btn button {
-    background: #145f82 !important;
-    color: white !important;
-}
-
-.secondary-btn button,
-.quick-btn button {
-    background: #4ea8d3 !important;
-    color: white !important;
-}
-
-.quick-btn button {
-    min-height: 56px !important;
-    justify-content: flex-start !important;
-    text-align: left !important;
-    font-size: 1rem !important;
-}
-
-.chat-area {
-    margin-top: 8px;
-}
-
-.msg-row {
-    display: flex;
-    align-items: flex-start;
-    gap: 14px;
-    margin-bottom: 14px;
-}
-
-.user-row {
-    justify-content: flex-end;
-}
-
 .user-spacer {
     width: 54px;
     min-width: 54px;
@@ -165,7 +101,6 @@ footer {
     line-height: 1.4;
     box-sizing: border-box;
     flex: 1;
-    max-width: 86%;
 }
 
 .ai-bubble {
@@ -190,8 +125,19 @@ footer {
 .query-box textarea,
 .query-box input {
     border: 2px solid #214253 !important;
-    border-radius: 10px !important;
-    min-height: 46px !important;
+    border-radius: 0 !important;
+    min-height: 48px !important;
+    font-size: 1rem !important;
+}
+
+.send-btn button {
+    background: #145f82 !important;
+    color: white !important;
+    border: 2px solid #214253 !important;
+    border-radius: 0 !important;
+    min-height: 48px !important;
+    min-width: 60px !important;
+    font-size: 1.2rem !important;
 }
 """
 
@@ -204,79 +150,6 @@ with gr.Blocks(css=custom_css) as demo:
     """)
 
     with gr.Column(elem_classes="main-wrap"):
-
-        # Top section
-        with gr.Row():
-            # Left side
-            with gr.Column(scale=1):
-                with gr.Row():
-                    gr.HTML('<div class="circle ai-circle">AI</div>')
-                    gr.Textbox(
-                        value="To Access all Features Please Login.",
-                        interactive=False,
-                        show_label=False,
-                        elem_classes="notice-box"
-                    )
-
-                with gr.Row():
-                    gr.Button("Language", elem_classes="secondary-btn")
-                    gr.Button("➜", elem_classes="arrow-btn")
-                    gr.Button("Accessibility", elem_classes="secondary-btn")
-                    gr.Button("➜", elem_classes="arrow-btn")
-
-                with gr.Row():
-                    with gr.Column(scale=1, min_width=120):
-                        gr.HTML('<div class="label-chip">Username</div>')
-                    with gr.Column(scale=4):
-                        gr.Textbox(
-                            placeholder="Please Enter Username......",
-                            show_label=False,
-                            elem_classes="input-box"
-                        )
-
-                with gr.Row():
-                    with gr.Column(scale=1, min_width=120):
-                        gr.HTML('<div class="label-chip">Password</div>')
-                    with gr.Column(scale=4):
-                        gr.Textbox(
-                            placeholder="Please Enter Password......",
-                            type="password",
-                            show_label=False,
-                            elem_classes="input-box"
-                        )
-
-                with gr.Row():
-                    gr.HTML("<div></div>")
-                    gr.Button("Login", elem_classes="primary-btn")
-
-            # Right side
-            with gr.Column(scale=1):
-                with gr.Row():
-                    gr.HTML('<div class="circle ai-circle">AI</div>')
-                    gr.Textbox(
-                        value="How may I assist you today?",
-                        interactive=False,
-                        show_label=False,
-                        elem_classes="notice-box"
-                    )
-
-                with gr.Row():
-                    gr.Button("Looking for Timetable information?", elem_classes="quick-btn")
-                    gr.Button("➜", elem_classes="arrow-btn")
-
-                with gr.Row():
-                    gr.Button("Course Information?", elem_classes="quick-btn")
-                    gr.Button("➜", elem_classes="arrow-btn")
-
-                with gr.Row():
-                    gr.Button("Contact IT Support", elem_classes="quick-btn")
-                    gr.Button("➜", elem_classes="arrow-btn")
-
-                with gr.Row():
-                    gr.Button("Click Here For Frequently Asked Questions", elem_classes="quick-btn")
-                    gr.Button("➜", elem_classes="arrow-btn")
-
-        # Chat preview
         with gr.Column(elem_classes="chat-area"):
             gr.HTML("""
                 <div class="msg-row">
@@ -286,49 +159,21 @@ with gr.Blocks(css=custom_css) as demo:
 
                 <div class="msg-row user-row">
                     <div class="user-spacer"></div>
-                    <div class="bubble user-bubble">What lessons do I have today?</div>
+                    <div class="bubble user-bubble">Which rooms are my lessons in?</div>
                     <div class="circle user-circle">S</div>
                 </div>
 
                 <div class="msg-row">
                     <div class="circle ai-circle">AI</div>
                     <div class="bubble ai-bubble">
-                        Today is Thursday:<br>
-                        9:00 – 11:00 (Cyber Security)<br>
-                        12:00 – 14:00 (Digital Forensics)
-                    </div>
-                </div>
-
-                <div class="msg-row">
-                    <div style="width:54px;"></div>
-                    <div style="display:flex; gap:12px; width:100%; max-width:420px;">
-                        <button style="
-                            background:#4ea8d3;
-                            color:white;
-                            border:2px solid #214253;
-                            border-radius:12px;
-                            min-height:50px;
-                            padding:0 18px;
-                            font-size:1rem;
-                            cursor:pointer;
-                        ">See Full Timetable</button>
-
-                        <button style="
-                            background:#145f82;
-                            color:white;
-                            border:2px solid #214253;
-                            border-radius:12px;
-                            min-height:50px;
-                            min-width:54px;
-                            font-size:1.2rem;
-                            cursor:pointer;
-                        ">➜</button>
+                        For Cyber Security you are in room HW1/14<br>
+                        For Digital Forensics you are in room OA1/04
                     </div>
                 </div>
 
                 <div class="msg-row">
                     <div class="circle ai-circle">AI</div>
-                    <div class="bubble ai-bubble">What else would you like me to assist you with?</div>
+                    <div class="bubble ai-bubble">Is there anything else I can assist you with?</div>
                 </div>
             """)
 
@@ -336,7 +181,6 @@ with gr.Blocks(css=custom_css) as demo:
             gr.HTML('<div class="info-tile">Next Lesson: 1hr 30 mins</div>')
             gr.HTML('<div class="info-tile">Assignment Due: 05/03/26</div>')
 
-        # Bottom query bar
         with gr.Row():
             gr.Textbox(
                 placeholder="Please Enter A Query.....",

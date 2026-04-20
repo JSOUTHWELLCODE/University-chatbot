@@ -108,16 +108,31 @@ class Chatbot:
         return answer
 
     def launch_ui(self):
-        # Set up the Gradio interface
-        interface = gr.Interface(
-            fn=self.ask_question,
-            inputs="text",
-            outputs="text",
-            title="University Chatbot",
-            description="Answers FAQS for university website Powered by DeepSeek-R1."
+        """This is now correctly indented as a class method"""
+        blue_theme = gr.themes.Soft(
+            primary_hue="blue", 
+            secondary_hue="blue",
+            spacing_size="sm", 
+            radius_size="none"
         )
-        interface.launch()
 
+        with gr.Blocks() as demo:
+            gr.Markdown("# 🏛️ University of Huddersfield Assistant")
+            
+            chatbot_ui = gr.Chatbot(height=500) 
+            msg = gr.Textbox(placeholder="Ask me anything...")
+
+            def respond(message, chat_history):
+                bot_message = self.ask_question(message)
+                # Correct dictionary format for Gradio 6
+                chat_history.append({"role": "user", "content": message})
+                chat_history.append({"role": "assistant", "content": bot_message})
+                return "", chat_history
+
+            msg.submit(respond, [msg, chatbot_ui], [msg, chatbot_ui])
+
+        # demo.launch stays inside the function so it can see blue_theme
+        demo.launch(theme=blue_theme)
 
 
 
@@ -127,7 +142,7 @@ if __name__ == "__main__":
      pdf_folder = "/Users/Jonny/Desktop/University-chatbot/PDF faqs" 
      e_path = "/Users/Jonny/Desktop/University-chatbot/Contact emails/CONTACT EMAILS.xlsx"
 
-     my_bot = chatbot(
+     my_bot = Chatbot(
          persist_path=p_path, 
          pdf_path=pdf_folder, 
          excel_path=e_path, 

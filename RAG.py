@@ -7,7 +7,7 @@ body, .gradio-container {
 }
 
 .gradio-container {
-    max-width: 650px !important;
+    max-width: 640px !important;
     margin: 0 auto !important;
     padding: 0 !important;
 }
@@ -20,6 +20,7 @@ footer {
     background: #145f82;
     color: white;
     padding: 16px 20px;
+    border: 2px solid #0d445b;
     border-bottom: 2px solid #0d445b;
     display: flex;
     justify-content: space-between;
@@ -28,7 +29,7 @@ footer {
 
 .topbar h1 {
     margin: 0;
-    font-size: 2rem;
+    font-size: 1.9rem;
     font-weight: 500;
 }
 
@@ -42,24 +43,27 @@ footer {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.35rem;
+    font-size: 1.3rem;
     font-weight: bold;
 }
 
 .main-wrap {
-    padding: 14px;
+    padding: 18px 12px 0 12px;
+    min-height: 620px;
+    box-sizing: border-box;
+    border-left: 2px solid #145f82;
+    border-right: 2px solid #145f82;
 }
 
 .chat-area {
-    min-height: 460px;
-    margin-top: 8px;
+    min-height: 540px;
 }
 
 .msg-row {
     display: flex;
     align-items: flex-start;
-    gap: 12px;
-    margin-bottom: 16px;
+    gap: 14px;
+    margin-bottom: 18px;
 }
 
 .user-row {
@@ -77,6 +81,7 @@ footer {
     justify-content: center;
     color: white;
     font-size: 1rem;
+    box-sizing: border-box;
 }
 
 .ai-circle {
@@ -84,7 +89,7 @@ footer {
 }
 
 .user-circle {
-    background: #05b84d;
+    background: #00B050;
 }
 
 .user-spacer {
@@ -98,7 +103,7 @@ footer {
     padding: 14px 16px;
     color: white;
     font-size: 1rem;
-    line-height: 1.4;
+    line-height: 1.35;
     box-sizing: border-box;
     flex: 1;
 }
@@ -108,43 +113,43 @@ footer {
 }
 
 .user-bubble {
-    background: #05b84d;
+    background: #00B050;
 }
 
-.info-tile {
-    background: #145f82;
-    color: white;
-    border: 2px solid #0d445b;
-    border-radius: 12px;
-    padding: 16px;
-    font-size: 1.05rem;
-    text-align: center;
-    font-weight: 500;
+.bottom-bar {
+    border-left: 2px solid #145f82;
+    border-right: 2px solid #145f82;
+    border-top: 2px solid #145f82;
+    border-bottom: 2px solid #145f82;
+    padding: 0;
 }
 
 .query-box textarea,
 .query-box input {
-    border: 2px solid #214253 !important;
+    border: none !important;
     border-radius: 0 !important;
     min-height: 48px !important;
     font-size: 1rem !important;
+    box-shadow: none !important;
+    background: white !important;
 }
 
 .send-btn button {
-    background: #145f82 !important;
-    color: white !important;
-    border: 2px solid #214253 !important;
+    background: white !important;
+    color: #145f82 !important;
+    border: none !important;
     border-radius: 0 !important;
     min-height: 48px !important;
     min-width: 60px !important;
-    font-size: 1.2rem !important;
+    font-size: 1.5rem !important;
+    box-shadow: none !important;
 }
 """
 
 with gr.Blocks(css=custom_css) as demo:
     gr.HTML("""
         <div class="topbar">
-            <h1>MyHud</h1>
+            <h1>MyHud AI Chatbot</h1>
             <div class="close-btn">✕</div>
         </div>
     """)
@@ -156,38 +161,15 @@ with gr.Blocks(css=custom_css) as demo:
                     <div class="circle ai-circle">AI</div>
                     <div class="bubble ai-bubble">How may I assist you today?</div>
                 </div>
-
-                <div class="msg-row user-row">
-                    <div class="user-spacer"></div>
-                    <div class="bubble user-bubble">Which rooms are my lessons in?</div>
-                    <div class="circle user-circle">S</div>
-                </div>
-
-                <div class="msg-row">
-                    <div class="circle ai-circle">AI</div>
-                    <div class="bubble ai-bubble">
-                        For Cyber Security you are in room HW1/14<br>
-                        For Digital Forensics you are in room OA1/04
-                    </div>
-                </div>
-
-                <div class="msg-row">
-                    <div class="circle ai-circle">AI</div>
-                    <div class="bubble ai-bubble">Is there anything else I can assist you with?</div>
-                </div>
             """)
 
-        with gr.Row():
-            gr.HTML('<div class="info-tile">Next Lesson: 1hr 30 mins</div>')
-            gr.HTML('<div class="info-tile">Assignment Due: 05/03/26</div>')
-
-        with gr.Row():
-            gr.Textbox(
-                placeholder="Please Enter A Query.....",
-                show_label=False,
-                scale=8,
-                elem_classes="query-box"
-            )
-            gr.Button("➜", elem_classes="send-btn", scale=1)
+    with gr.Row(elem_classes="bottom-bar"):
+        gr.Textbox(
+            placeholder="Please Enter A Query....",
+            show_label=False,
+            scale=9,
+            elem_classes="query-box"
+        )
+        gr.Button("➜", elem_classes="send-btn", scale=1)
 
 demo.launch()

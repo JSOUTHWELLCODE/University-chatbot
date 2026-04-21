@@ -15,11 +15,7 @@ class Chatbot:
         self.matcher = Fuzzymatch(excel_path)
         self.llm = OllamaLLM(model=llm_model)
 
-<<<<<<< HEAD
-        
-=======
-        # VectorStore management
->>>>>>> UI_QAMAR
+
         self.kb_manager = VectorStore(
             persist_path=self.persist_path, 
             path_to_pdf=self.pdf_path, 
@@ -30,15 +26,6 @@ class Chatbot:
         self.retriever = self.vector_db.as_retriever()
 
     def query_deepseek(self, question, context):
-<<<<<<< HEAD
-      
-        
-        
-        
-        
-        
-=======
->>>>>>> UI_QAMAR
         system_instruction = (
             "### ROLE ###\n"
             "You are the University of Huddersfield Official Assistant.\n\n"
@@ -56,10 +43,6 @@ class Chatbot:
             "### FINAL ANSWER ###"
         )
         
-<<<<<<< HEAD
-        
-=======
->>>>>>> UI_QAMAR
         response = self.llm.invoke(prompt)
         final_answer = re.sub(r'<think>.*?</think>', '', response, flags=re.DOTALL).strip()
         return final_answer
@@ -74,24 +57,9 @@ class Chatbot:
         fuzzy_result = self.matcher.find_department(question)
         contact_info = f"\nNote: The official contact for this department is {fuzzy_result}." if fuzzy_result else ""
         
-<<<<<<< HEAD
-        
-        # If a match was found, add it to our knowledge
-        if fuzzy_result:
-            contact_info = f"\nNote: The official contact for this department is {fuzzy_result}."
-        else:
-            contact_info = ""
-
-        #  Get general context from Vector DB 
-=======
->>>>>>> UI_QAMAR
         context = self.retrieve_context(question)
         combined_context = context + contact_info
         
-<<<<<<< HEAD
-        #  Send everything to DeepSeek 
-=======
->>>>>>> UI_QAMAR
         answer = self.query_deepseek(question, combined_context)
         return answer
 
